@@ -1,9 +1,13 @@
 System Instruction
 
-Purpose
+Project Profile
 
-- Define a consistent, concise setup and working agreement for our backend (Python/FastAPI) and frontend (Next.js) codebases.
-- Provide clear folder structures, technology choices, and conventions for contributors and coding agents.
+- Template
+    - Project name: <name>
+    - Purpose: <one sentence>
+    - Base URLs: frontend <...>, backend <...> 
+    - Integrations: <list>
+
 
 Backend
 
