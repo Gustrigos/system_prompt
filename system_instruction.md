@@ -16,46 +16,49 @@ Backend
     - Pytest for testing; Ruff + Black + isort for linting/formatting
 
 - Project structure
-    - backend/
-        - app/
-            - main.py
-            - core/
-                - config.py
-                - logging.py
-            - api/
-                - v1/
-                    - health.py
-                    - feature_one.py
-            - models/
-                - pydantic_types.py
-            - services/
-                - feature_one.py
-        - db/
-            - prisma/
-                - schema.prisma
-        - tests/
-            - test_feature_one.py
-            - test_health.py
+    - Overview
+        - `app/` → FastAPI app with core config/logging, versioned API routers, models, and services
+        - `db/prisma/` → Prisma schema and generated client artifacts
+        - `tests/` → pytest tests grouped by feature
+    - Example
 
-- Conventions
-    - Favor functional programming. Keep services as pure functions. Avoid classes unless strictly necessary.
-    - Use snake_case for Python modules and directories. Filenames are lowercase.
-    - Place request/response Pydantic models in `app/models`. Keep domain types separate from transport shapes when helpful.
-    - Group API routes by feature under `app/api/v1`. Expose them under the `/api/v1` prefix.
-    - Centralize configuration in `app/core/config.py` (reads from `.env`, e.g., `DATABASE_URL`).
-    - Use standard `logging` configured in `app/core/logging.py`.
-    - Add tests in `tests/` for each new service and route.
+```
+backend
+├── app
+│   ├── main.py
+│   ├── core
+│   │   ├── config.py
+│   │   └── logging.py
+│   ├── api
+│   │   └── v1
+│   │       ├── feature_one.py
+│   │       └── health.py
+│   ├── models
+│   │   └── pydantic_types.py
+│   └── services
+│       └── feature_one.py
+├── db
+│   └── prisma
+│       └── schema.prisma
+└── tests
+    ├── test_feature_one.py
+    └── test_health.py
+```
 
-- Database and Prisma
-    - `db/prisma/schema.prisma` should define:
-        - `generator client { provider = "prisma-client-py" }`
-        - `datasource db { provider = "postgresql" url = env("DATABASE_URL") }`
-    - Commands
-        - `poetry run prisma generate`
-        - `poetry run prisma migrate dev --name init`
-    - Use the client via `from prisma import Prisma`. Initialize the client at app startup and close on shutdown.
+- Configuration
+    - Environment
+        - `.env` contains `DATABASE_URL=postgresql://...`
+        - Centralize configuration in `app/core/config.py`
+    - Database and Prisma
+        - `db/prisma/schema.prisma` includes:
+            - `generator client { provider = "prisma-client-py" }`
+            - `datasource db { provider = "postgresql" url = env("DATABASE_URL") }`
+        - Commands:
+            - `poetry run prisma generate`
+            - `poetry run prisma migrate dev --name init`
+        - Use via `from prisma import Prisma`; initialize on startup and close on shutdown
 
-- Common commands
+- Commands
     - Setup
         - `poetry env use 3.12`
         - `poetry install`
@@ -67,6 +70,14 @@ Backend
         - `poetry run ruff check .`
         - `poetry run ruff format .`
 
+- Conventions
+    - Favor functional programming. Keep services as pure functions. Avoid classes unless strictly necessary.
+    - Use snake_case for Python modules and directories. Filenames are lowercase.
+    - Place request/response Pydantic models in `app/models`. Keep domain types separate from transport shapes when helpful.
+    - Group API routes by feature under `app/api/v1`. Expose them under the `/api/v1` prefix.
+    - Use standard `logging` configured in `app/core/logging.py`.
+    - Add tests in `tests/` for each new service and route.
+
 Frontend
 
 - Stack
@@ -76,15 +87,15 @@ Frontend
     - shadcn/ui for UI primitives
     - ESLint + Prettier
 
-- Highlights
-    - `app/` → routing, layouts, pages, API routes
-    - `components/ui/` → shadcn-generated primitives (keep filenames lowercase to match shadcn imports)
-    - `components/` → higher-level UI (use PascalCase filenames, e.g., `Navbar.tsx`)
-    - `hooks/` → custom hooks organized by feature
-    - `public/` → static assets
-    - Mirror feature paths: components and hooks follow the `app/` route structure. For `app/admin/settings/page.tsx`, use `components/admin/settings/` and `hooks/admin/settings/`.
-
-- Example structure
+- Project structure
+    - Overview
+        - `app/` → routing, layouts, pages, API routes
+        - `components/ui/` → shadcn-generated primitives (keep filenames lowercase to match shadcn imports)
+        - `components/` → higher-level UI (use PascalCase filenames, e.g., `Navbar.tsx`)
+        - `hooks/` → custom hooks organized by feature
+        - `public/` → static assets
+        - Mirror feature paths: components and hooks follow the `app/` route structure. For `app/admin/settings/page.tsx`, use `components/admin/settings/` and `hooks/admin/settings/`.
+    - Example
 
 ```
 frontend
@@ -141,20 +152,26 @@ frontend
 └── package.json
 ```
 
+- Configuration
+    - Environment
+        - Access the backend via `process.env.NEXT_PUBLIC_API_BASE_URL`
+
+- Commands
+    - Setup
+        - `pnpm install` (or `npm install`)
+    - Run
+        - `pnpm dev` (or `npm run dev`)
+    - Test
+        - `pnpm test` (if configured)
+    - Lint/format
+        - `pnpm lint`
+        - `pnpm format`
+
 - Conventions
     - Keep `components/ui` limited to shadcn primitives. Extend them in `components/` rather than modifying directly.
     - Use PascalCase for component filenames outside `components/ui`.
     - Name hooks `useXyz` and colocate by feature under `hooks/`.
     - Use server components by default; add `"use client"` only when necessary.
-    - Access the backend via `process.env.NEXT_PUBLIC_API_BASE_URL`.
-
-- Common commands
-    - Setup
-        - `pnpm install` (or `npm install`)
-    - Run
-        - `pnpm dev` (or `npm run dev`)
-    - Lint/format
-        - `pnpm lint` and `pnpm format`
 
 General Guidelines for Coding Agents
 
